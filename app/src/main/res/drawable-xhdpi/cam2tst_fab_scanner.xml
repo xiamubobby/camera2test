@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/cam2tst_fab_scanner_base"
+    android:inset="2dp">
+
+</inset>
