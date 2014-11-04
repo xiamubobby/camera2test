@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
         Fragment scannerFragment = getFragmentManager().findFragmentById(R.id.scannerFragment);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        scannerFragment.getView().setTranslationY(300);
+        scannerFragment.getView().setTranslationY(-300);
     }
 
     @Override

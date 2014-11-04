@@ -6,10 +6,11 @@
     tools:context="com.xiamubobby.camera2test.MainActivity" tools:ignore="MergeRootFrame" >
 
     <FrameLayout
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_width="100dp" android:layout_height="100dp"
         android:id="@+id/mainFrame"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"  />
+        android:layout_alignParentTop="true"
+        android:background="@android:color/holo_red_dark"/>
 
     <Button
         android:src="@drawable/cam2tst_fab_scanner_shape"
@@ -26,6 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scannerFragment"
-        android:layout_above="@+id/mainFrame" />
+        android:layout_below="@+id/mainFrame" />
 
 </RelativeLayout>
