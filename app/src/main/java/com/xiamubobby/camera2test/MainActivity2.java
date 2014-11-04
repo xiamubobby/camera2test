@@ -23,7 +23,6 @@ import java.util.Arrays;
 public class MainActivity2 extends Activity {
 
     Size mOutPutSize;
-
     CameraDevice mCameraDevice;
     CaptureRequest.Builder mCaptureRequestBuilder;
     CameraCaptureSession mCameraCaptureSession;
@@ -34,7 +33,7 @@ public class MainActivity2 extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        mTextureView = (TextureView) findViewById(R.id.simp_texture);
+        mTextureView = (TextureView) findViewById(R.id.scanner_texture_view);
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture arg0, int arg1, int arg2) {

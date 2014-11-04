@@ -15,7 +15,7 @@
             <TextureView
                 android:layout_width="240dp"
                 android:layout_height="320dp"
-                android:id="@+id/simp_texture" />
+                android:id="@+id/scanner_texture_view" />
 
         </FrameLayout>
 

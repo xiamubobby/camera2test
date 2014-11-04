@@ -7,6 +7,7 @@
     <dimen name="cam2tst_ripple_vertical_padding">1dp</dimen>
     <dimen name="cam2tst_ripple_radius">2dp</dimen>
 
+    <dimen name="cam2tst_fab_size">72dp</dimen>
     <dimen name="cam2tst_fab_margin_end">10dp</dimen>
-    <dimen name="cam2tst_fab_margin_top">-10dp</dimen>
+    <dimen name="cam2tst_fab_margin_top">-36dp</dimen>
 </resources>
