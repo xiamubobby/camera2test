@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <padding
+        android:left="@dimen/cam2tst_ripple_horizontal_padding"
+        android:top="@dimen/cam2tst_ripple_vertical_padding"
+        android:right="@dimen/cam2tst_ripple_horizontal_padding"
+        android:bottom="@dimen/cam2tst_ripple_vertical_padding" />
+    <solid android:color="@color/cam2tst_ripple_bg_color" />
+    <corners
+        android:radius="@dimen/cam2tst_ripple_radius" />
+</shape>
