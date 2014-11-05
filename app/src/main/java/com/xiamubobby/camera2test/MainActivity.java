@@ -128,7 +128,6 @@ public class MainActivity extends Activity {
         try {
             mCameraDevice.createCaptureSession(
                     outputSurfaces,
-                    //Arrays.asList(mTVSurface),
                     new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(CameraCaptureSession session) {
