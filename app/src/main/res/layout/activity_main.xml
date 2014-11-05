@@ -23,10 +23,10 @@
         android:background="@drawable/cam2tst_fab_scanner"
         android:onClick="scannerOut"/>
 
-    <fragment android:name="com.xiamubobby.camera2test.ScannerFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/scannerFragment"
-        android:layout_below="@+id/mainFrame" />
+        <fragment android:name="com.xiamubobby.camera2test.ScannerFragment"
+            android:layout_width="@dimen/scanner_width"
+            android:layout_height="wrap_content"
+            android:id="@+id/scannerFragment"
+            android:layout_below="@id/mainFrame"/>
 
 </RelativeLayout>

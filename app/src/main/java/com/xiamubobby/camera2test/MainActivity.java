@@ -3,6 +3,7 @@ package com.xiamubobby.camera2test;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -12,6 +13,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ImageReader;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -22,7 +24,9 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -32,8 +36,10 @@ public class MainActivity extends Activity {
     CaptureRequest.Builder mCaptureRequestBuilder;
     CameraCaptureSession mCameraCaptureSession;
     TextureView mTextureView;
-    SurfaceTexture mSurfaceTexture;
-    Surface mSurface;
+    SurfaceTexture mTVSurfaceTexture;
+    Surface mTVSurface;
+    ImageReader mImageReader;
+    Surface mIRSurface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +50,8 @@ public class MainActivity extends Activity {
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture arg0, int arg1, int arg2) {
-                mSurfaceTexture = arg0;
-                mSurface = new Surface(mSurfaceTexture);
+                mTVSurfaceTexture = arg0;
+                mTVSurface = new Surface(mTVSurfaceTexture);
             }
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture arg0) {
@@ -56,7 +62,7 @@ public class MainActivity extends Activity {
             @Override
             public void onSurfaceTextureUpdated(SurfaceTexture arg0) {}
         });
-        mSurfaceTexture = mTextureView.getSurfaceTexture();
+        mTVSurfaceTexture = mTextureView.getSurfaceTexture();
     }
 
     public void openCamera(View view) {
@@ -73,6 +79,7 @@ public class MainActivity extends Activity {
             for (int i = 0; i != wSize.length; i++) {
                 Log.v("size at " + i, wSize[i].toString());
             }
+
             manager.openCamera(
                     cameraId,
                     new CameraDevice.StateCallback() {
@@ -102,7 +109,8 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         mCaptureRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, CaptureRequest.CONTROL_SCENE_MODE_BARCODE);
-        mCaptureRequestBuilder.addTarget(mSurface);
+        mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO );
+        mCaptureRequestBuilder.addTarget(mTVSurface);
         /**
          * =>createCaptureSession
          */
@@ -110,11 +118,17 @@ public class MainActivity extends Activity {
     }
 
     public void createCaptureSession() {
-        mSurfaceTexture.setDefaultBufferSize(mOutPutSize.getWidth(), mOutPutSize.getHeight());
-        Log.v("size", mOutPutSize.toString());
+        mTVSurfaceTexture.setDefaultBufferSize(mOutPutSize.getWidth(), mOutPutSize.getHeight());
+        mImageReader = ImageReader.newInstance(mOutPutSize.getWidth(), mOutPutSize.getHeight(), ImageFormat.JPEG, 1);
+
+        List<Surface> outputSurfaces = new ArrayList<Surface>(2);
+        outputSurfaces.add(mTVSurface);
+        outputSurfaces.add(mImageReader.getSurface());
+
         try {
             mCameraDevice.createCaptureSession(
-                    Arrays.asList(mSurface),
+                    outputSurfaces,
+                    //Arrays.asList(mTVSurface),
                     new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(CameraCaptureSession session) {
@@ -147,13 +161,17 @@ public class MainActivity extends Activity {
     }
 
     public void scannerOut(View view) {
-        scannerOut();
+        //scannerOut();
     }
     public void scannerOut() {
         Fragment scannerFragment = getFragmentManager().findFragmentById(R.id.scannerFragment);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        scannerFragment.getView().setTranslationY(-300);
+        View v = scannerFragment.getView();
+        int[] lcn = new int[2];
+        scannerFragment.getView().getLocationOnScreen(lcn);
+        scannerFragment.getView().setVisibility(View.VISIBLE);
+        v .setTranslationY(v.getTranslationY()+100);
     }
 
     @Override
