@@ -3,7 +3,9 @@ package com.xiamubobby.camera2test;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -15,18 +17,21 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class MainActivity extends Activity {
@@ -41,26 +46,40 @@ public class MainActivity extends Activity {
     ImageReader mImageReader;
     Surface mIRSurface;
 
+    private Thread mProducerThread = null;
+    private GLRendererImpl mRenderer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mTextureView = (TextureView) findViewById(R.id.scanner_texture_view);
+        mRenderer = new GLRendererImpl(this);
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture arg0, int arg1, int arg2) {
                 mTVSurfaceTexture = arg0;
                 mTVSurface = new Surface(mTVSurfaceTexture);
+
+                mRenderer.setViewport(arg1, arg2);
+                mProducerThread = new GLProducerThread(arg0, mRenderer, new AtomicBoolean(true));
+                mProducerThread.start();
             }
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture arg0) {
-                return false;
+                mProducerThread = null;
+                return true;
             }
             @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture arg0, int arg1, int arg2) {}
+            public void onSurfaceTextureSizeChanged(SurfaceTexture arg0, int arg1, int arg2) {
+                mRenderer.resize(arg1, arg2);
+            }
             @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture arg0) {}
+            public void onSurfaceTextureUpdated(SurfaceTexture arg0) {
+//                    Canvas cvs = mTVSurface.lockCanvas(null);
+//                    mTVSurface.unlockCanvasAndPost(cvs);
+            }
         });
         mTVSurfaceTexture = mTextureView.getSurfaceTexture();
     }
@@ -111,6 +130,17 @@ public class MainActivity extends Activity {
         mCaptureRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, CaptureRequest.CONTROL_SCENE_MODE_BARCODE);
         mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO );
         mCaptureRequestBuilder.addTarget(mTVSurface);
+        mImageReader = ImageReader.newInstance(mOutPutSize.getWidth(), mOutPutSize.getHeight(), ImageFormat.JPEG, 1);
+        mImageReader.setOnImageAvailableListener(
+                new ImageReader.OnImageAvailableListener() {
+                    @Override
+                    public void onImageAvailable(ImageReader reader) {
+                        Log.v("yes this works", " it really works");
+                    }
+                },
+                new Handler());
+        mIRSurface = mImageReader.getSurface();
+        //mCaptureRequestBuilder.addTarget(mIRSurface);
         /**
          * =>createCaptureSession
          */
@@ -119,11 +149,10 @@ public class MainActivity extends Activity {
 
     public void createCaptureSession() {
         mTVSurfaceTexture.setDefaultBufferSize(mOutPutSize.getWidth(), mOutPutSize.getHeight());
-        mImageReader = ImageReader.newInstance(mOutPutSize.getWidth(), mOutPutSize.getHeight(), ImageFormat.JPEG, 1);
 
         List<Surface> outputSurfaces = new ArrayList<Surface>(2);
         outputSurfaces.add(mTVSurface);
-        outputSurfaces.add(mImageReader.getSurface());
+        //outputSurfaces.add(mIRSurface);
 
         try {
             mCameraDevice.createCaptureSession(
@@ -149,7 +178,7 @@ public class MainActivity extends Activity {
 
     public void createRepeatRequest() {
         try {
-            mCameraCaptureSession.setRepeatingRequest(mCaptureRequestBuilder.build(), new CameraCaptureSession.CaptureCallback() {
+            mCameraCaptureSession.capture(mCaptureRequestBuilder.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                 }
