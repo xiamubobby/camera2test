@@ -26,7 +26,16 @@ public class GLRendererImpl implements GLProducerThread.GLRenderer {
     private int mTexID;
     private static String TAG = "GLRendererImpl";
 
-    private final float[] mVerticesData = { -0.5f, -0.5f, 0, 0.5f, -0.5f, 0, -0.5f, 0.5f, 0, 0.5f, 0.5f, 0 };
+    /*private final float[] mVerticesData = {
+            -0.5f, -0.5f, 0,
+                0.5f, -0.5f, 0,
+            -0.5f, 0.5f, 0,
+                0.5f, 0.5f, 0 };*/
+    private final float[] mVerticesData = {
+            -1f, -1f, 0,
+            1f, -1f, 0,
+            -1f, 1f, 0,
+            1f, 1f, 0 };
     private final short[] mTexCoordsData = {0, 1, 1, 1, 0, 0, 1, 0};
 
     public GLRendererImpl(Context ctx)
@@ -55,7 +64,7 @@ public class GLRendererImpl implements GLProducerThread.GLRenderer {
 
         loadTexture();
 
-        GLES20.glClearColor(0,  0, 0, 0);
+        GLES20.glClearColor(255,  255, 255, 0);
     }
 
     public void resize(int width, int height)
