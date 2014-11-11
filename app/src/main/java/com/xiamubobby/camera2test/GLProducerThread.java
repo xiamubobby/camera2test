@@ -31,6 +31,10 @@ public class GLProducerThread extends Thread {
         public void drawFrame();
     }
 
+    public void setViewport(int w, int h) {
+        ((GLRendererImpl) mRenderer).setViewport(w, h);
+    }
+
     public GLProducerThread(SurfaceTexture surfaceTexture, GLRenderer renderer, AtomicBoolean shouldRender)
     {
         mSurfaceTexture = surfaceTexture;
@@ -113,9 +117,8 @@ public class GLProducerThread extends Thread {
 
         while (mShouldRender != null && mShouldRender.get() != false) {
             if (mRenderer != null)
-                mRenderer.drawFrame();
-            mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
-
+                //mRenderer.drawFrame();
+            //mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
             try {
                 sleep(5);
             } catch(InterruptedException e) {

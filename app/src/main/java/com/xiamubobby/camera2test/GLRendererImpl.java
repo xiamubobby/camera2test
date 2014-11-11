@@ -3,6 +3,7 @@ package com.xiamubobby.camera2test;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
@@ -93,7 +94,7 @@ public class GLRendererImpl implements GLProducerThread.GLRenderer {
         GLES20.glUniform1f(loc, 0);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
-        Log.i("GLRendererImpl", "drawing..." + mWidth);
+        //Log.i("GLRendererImpl", "drawing..." + mWidth);
     }
 
     private void loadTexture() {
@@ -118,6 +119,25 @@ public class GLRendererImpl implements GLProducerThread.GLRenderer {
             b.recycle();
         }
     }
+
+    private void loadTexture(SurfaceTexture tex) {
+        int []texID = new int[1];
+        GLES20.glGenTextures(1, texID, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texID[0]);
+        mTexID = texID[0];
+
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR);
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+                GLES20.GL_REPEAT);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+                GLES20.GL_REPEAT);
+        tex.attachToGLContext(mTexID);
+    }
+
 
     private int loadShader(int shaderType, String shaderSource) {
         int shader;

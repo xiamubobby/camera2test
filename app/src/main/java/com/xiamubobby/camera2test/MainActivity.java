@@ -77,8 +77,7 @@ public class MainActivity extends Activity {
             }
             @Override
             public void onSurfaceTextureUpdated(SurfaceTexture arg0) {
-//                    Canvas cvs = mTVSurface.lockCanvas(null);
-//                    mTVSurface.unlockCanvasAndPost(cvs);
+
             }
         });
         mTVSurfaceTexture = mTextureView.getSurfaceTexture();
@@ -178,7 +177,7 @@ public class MainActivity extends Activity {
 
     public void createRepeatRequest() {
         try {
-            mCameraCaptureSession.capture(mCaptureRequestBuilder.build(), new CameraCaptureSession.CaptureCallback() {
+            mCameraCaptureSession.setRepeatingRequest(mCaptureRequestBuilder.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                 }
